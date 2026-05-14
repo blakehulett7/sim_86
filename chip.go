@@ -94,6 +94,21 @@ func (c *Chip) SetValue(register string, value [2]byte) {
 	}
 }
 
+func (c *Chip) WriteSrcToDest(instruction Instruction, source_type SourceType) {
+	switch source_type {
+	default:
+	case Int:
+		immediate, _ := ParseImmediate(instruction.Src)
+		c.SetValue(instruction.Dest, Write(immediate))
+	case Raw:
+		value := ParseRaw(instruction.Src)
+		c.SetValue(instruction.Dest, value)
+	case Register:
+		src_value := c.GetRawValue(instruction.Src)
+		c.SetValue(instruction.Dest, src_value)
+	}
+}
+
 func NewChip() Chip {
 	return Chip{}
 }

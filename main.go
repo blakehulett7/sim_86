@@ -49,13 +49,8 @@ func Execute(chip *Chip, instruction Instruction) {
 		os.Exit(1)
 	}
 
-	immediate, err := ParseImmediate(instruction.Src)
-	if err != nil {
-		src_value := chip.GetRawValue(instruction.Src)
-		chip.SetValue(instruction.Dest, src_value)
-	} else {
-		chip.SetValue(instruction.Dest, Write(immediate))
-	}
+	source_type := ParseSrcType(instruction.Src)
+	chip.WriteSrcToDest(instruction, source_type)
 
 	fmt.Printf("%#x\n", chip.GetValue(instruction.Dest))
 }

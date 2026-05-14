@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/hex"
 	"fmt"
 	"os"
 	"strconv"
@@ -33,4 +34,33 @@ func ParseLine(line string) Instruction {
 		Dest: strings.TrimSuffix(parts[1], ","),
 		Src:  parts[2],
 	}
+}
+
+func ParseRaw(input string) [2]byte {
+	data, _ := hex.DecodeString(strings.TrimPrefix(input, "0x"))
+
+	if len(data) > 2 || len(data) == 0 {
+		fmt.Printf("invalid raw source, to big or empty: %s\n", input)
+		os.Exit(1)
+	}
+
+	if len(data) == 1 {
+		return [2]byte{0, data[0]}
+	}
+
+	return [2]byte{data[0], data[1]}
+}
+
+func ParseSrcType(input string) SourceType {
+	_, err := strconv.Atoi(input)
+	if err == nil {
+		return Int
+	}
+
+	_, err = hex.DecodeString(input)
+	if err != nil {
+		return Raw
+	}
+
+	return Register
 }
