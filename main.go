@@ -55,18 +55,21 @@ func Execute(chip *Chip, instruction Instruction) {
 
 	fmt.Printf("%s:%#x->", dest, chip.GetValue(instruction.Dest))
 
-	if instruction.Op != "mov" {
-		fmt.Println("\nOp not supported, use mov")
-		os.Exit(1)
-	}
-
 	source_type := ParseSrcType(instruction.Src)
 	chip.WriteSrcToDest(instruction, source_type)
 
 	fmt.Printf("%#x\n", chip.GetValue(instruction.Dest))
 }
 
-func Write(value int16) [2]byte {
+func WriteInt(value int16) [2]byte {
+	var b [2]byte
+	b[0] = byte(value >> 8)
+	b[1] = byte(value)
+
+	return b
+}
+
+func WriteUint(value uint16) [2]byte {
 	var b [2]byte
 	b[0] = byte(value >> 8)
 	b[1] = byte(value)

@@ -162,12 +162,15 @@ func (c *Chip) WriteSrcToDest(instruction Instruction, source_type SourceType) {
 	default:
 	case Int:
 		immediate, _ := ParseImmediate(instruction.Src)
-		c.SetValue(instruction.Dest, Write(immediate))
+		c.TransformSourceInt(&immediate, instruction)
+		c.SetValue(instruction.Dest, WriteInt(immediate))
 	case Raw:
 		value := ParseRaw(instruction.Src)
+		c.TransformSourceRaw(&value, instruction)
 		c.SetValue(instruction.Dest, value)
 	case Register:
 		src_value := c.GetRawValue(instruction.Src)
+		c.TransformSourceRegister(&src_value, instruction)
 		c.SetValue(instruction.Dest, src_value)
 	}
 }
