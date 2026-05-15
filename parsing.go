@@ -14,7 +14,7 @@ func ParseImmediate(input string) (int16, error) {
 		return 0, fmt.Errorf("not an immediate")
 	}
 
-	if immediate < -32768 || immediate > 32767 {
+	if immediate < -32768 || immediate > 65534 {
 		fmt.Println("immediate overflow")
 		os.Exit(1)
 	}

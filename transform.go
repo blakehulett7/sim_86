@@ -47,6 +47,11 @@ func (c *Chip) TransformSourceRegister(source *[2]byte, instruction Instruction)
 	case "mov":
 		return
 	case "add":
+		dest := c.GetValue(instruction.Dest)
+		src := castToU16(*source)
+		result := dest + src
+		c.SetFlags(result)
+		*source = WriteUint(result)
 	case "sub":
 		dest := c.GetValue(instruction.Dest)
 		src := castToU16(*source)
