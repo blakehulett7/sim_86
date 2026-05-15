@@ -24,7 +24,7 @@ type Chip struct {
 
 	Flags Flags
 
-	Memory [2 << 20]byte
+	Memory [1 << 20]byte
 }
 
 type Flags struct {
