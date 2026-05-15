@@ -55,11 +55,20 @@ func Execute(chip *Chip, instruction Instruction) {
 	}
 
 	fmt.Printf("%s:%#x->", dest, chip.GetValue(instruction.Dest))
+	initial_flags := chip.GetFlags()
+	flag_string := fmt.Sprintf("flags:%s", initial_flags)
 
 	source_type := ParseSrcType(instruction.Src)
 	chip.WriteSrcToDest(instruction, source_type)
 
-	fmt.Printf("%#x flags:%s\n", chip.GetValue(instruction.Dest), chip.GetFlags())
+	final_flags := chip.GetFlags()
+	flag_string += fmt.Sprintf("->%s", final_flags)
+
+	fmt.Printf("%#x ", chip.GetValue(instruction.Dest))
+	if initial_flags != final_flags {
+		fmt.Print(flag_string)
+	}
+	fmt.Println()
 }
 
 func WriteInt(value int16) [2]byte {
