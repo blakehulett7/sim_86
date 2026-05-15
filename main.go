@@ -74,7 +74,9 @@ func Execute(chip *Chip, instruction Instruction) {
 		dest = strings.Replace(instruction.Dest, "l", "x", 1)
 	}
 
-	fmt.Printf("%s:%#x->", dest, chip.GetValue(instruction.Dest))
+	if !strings.Contains(instruction.Dest, "[") {
+		fmt.Printf("%s:%#x->", dest, chip.GetValue(instruction.Dest))
+	}
 	initial_flags := chip.GetFlags()
 	flag_string := fmt.Sprintf("flags:%s", initial_flags)
 
@@ -84,7 +86,9 @@ func Execute(chip *Chip, instruction Instruction) {
 	final_flags := chip.GetFlags()
 	flag_string += fmt.Sprintf("->%s", final_flags)
 
-	fmt.Printf("%#x ", chip.GetValue(instruction.Dest))
+	if !strings.Contains(instruction.Dest, "[") {
+		fmt.Printf("%#x ", chip.GetValue(instruction.Dest))
+	}
 	if initial_flags != final_flags {
 		fmt.Print(flag_string)
 	}

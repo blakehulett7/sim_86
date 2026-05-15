@@ -36,6 +36,22 @@ func ParseLine(line string) Instruction {
 	}
 }
 
+func ParseMemoryAddress(memory_lookup string) (MemoryAddress, error) {
+	lookup := strings.Trim(memory_lookup, "[]")
+	if !strings.Contains(lookup, "+") {
+		address, err := strconv.Atoi(lookup)
+		return MemoryAddress{Offset: address}, err
+	}
+
+	parts := strings.Split(lookup, "+")
+	if len(parts) != 2 {
+		return MemoryAddress{}, fmt.Errorf("invalid memory lookup: %s\n", memory_lookup)
+	}
+	offset, err := strconv.Atoi(parts[1])
+
+	return MemoryAddress{Register: parts[0], Offset: offset}, err
+}
+
 func ParseRaw(input string) [2]byte {
 	data, _ := hex.DecodeString(strings.TrimPrefix(input, "0x"))
 

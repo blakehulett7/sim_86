@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"strings"
 )
 
 type Chip struct {
@@ -22,6 +23,8 @@ type Chip struct {
 	IP uint8
 
 	Flags Flags
+
+	Memory [2 << 20]byte
 }
 
 type Flags struct {
@@ -117,6 +120,11 @@ func (c *Chip) GetValue(register string) uint16 {
 }
 
 func (c *Chip) SetValue(register string, value [2]byte) {
+	if strings.Contains(register, "[") {
+		c.WriteToMemory(register, value)
+		return
+	}
+
 	switch register {
 	default:
 		fmt.Println("invalid register, can't set")
@@ -222,6 +230,21 @@ func (c *Chip) WriteSrcToDest(instruction Instruction, source_type SourceType) {
 		c.TransformSourceRegister(&src_value, instruction)
 		c.SetValue(instruction.Dest, src_value)
 	}
+}
+
+func (c *Chip) WriteToMemory(memory_lookup string, value [2]byte) {
+	memory_address, err := ParseMemoryAddress(memory_lookup)
+	if err != nil {
+		fmt.Println("invalid memory address")
+		os.Exit(1)
+	}
+
+	if memory_address.Register == "" {
+		c.Memory[memory_address.Offset+1] = value[0]
+		c.Memory[memory_address.Offset] = value[1]
+		return
+	}
+
 }
 
 func NewChip() Chip {
