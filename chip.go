@@ -119,13 +119,13 @@ func (c *Chip) GetValue(register string) uint16 {
 	}
 }
 
-func (c *Chip) SetValue(register string, value [2]byte) {
-	if strings.Contains(register, "[") {
-		c.WriteToMemory(register, value)
+func (c *Chip) SetValue(instruction Instruction, value [2]byte) {
+	if strings.Contains(instruction.Dest, "[") {
+		c.WriteToMemory(instruction, value)
 		return
 	}
 
-	switch register {
+	switch instruction.Dest {
 	default:
 		fmt.Println("invalid register, can't set")
 		os.Exit(1)
@@ -220,27 +220,27 @@ func (c *Chip) WriteSrcToDest(instruction Instruction, source_type SourceType) {
 	case Int:
 		immediate, _ := ParseImmediate(instruction.Src)
 		c.TransformSourceInt(&immediate, instruction)
-		c.SetValue(instruction.Dest, WriteInt(immediate))
+		c.SetValue(instruction, WriteInt(immediate))
 	case Memory:
 		address, _ := ParseMemoryAddress(instruction.Src)
 		value := c.GetFromMemory(address)
 		c.TransformSourceRaw(&value, instruction)
-		c.SetValue(instruction.Dest, value)
+		c.SetValue(instruction, value)
 	case Raw:
 		value := ParseRaw(instruction.Src)
 		c.TransformSourceRaw(&value, instruction)
-		c.SetValue(instruction.Dest, value)
+		c.SetValue(instruction, value)
 	case Register:
 		src_value := c.GetRawValue(instruction.Src)
 		c.TransformSourceRegister(&src_value, instruction)
-		c.SetValue(instruction.Dest, src_value)
+		c.SetValue(instruction, src_value)
 	}
 }
 
-func (c *Chip) WriteToMemory(memory_lookup string, value [2]byte) {
-	memory_address, err := ParseMemoryAddress(memory_lookup)
+func (c *Chip) WriteToMemory(instruction Instruction, value [2]byte) {
+	memory_address, err := ParseMemoryAddress(instruction.Dest)
 	if err != nil {
-		fmt.Println("invalid memory address")
+		fmt.Printf("invalid memory address: %+v\n", memory_address)
 		os.Exit(1)
 	}
 
@@ -258,8 +258,12 @@ func (c *Chip) WriteToMemory(memory_lookup string, value [2]byte) {
 	}
 
 	fmt.Printf("[%d]:%x->", index, c.GetFromMemory(memory_address))
-	c.Memory[index+1] = value[0]
-	c.Memory[index+0] = value[1]
+
+	c.Memory[index] = value[1]
+	if instruction.Size != "byte" {
+		c.Memory[index+1] = value[0]
+	}
+
 	fmt.Printf("%x ", c.GetFromMemory(memory_address))
 }
 

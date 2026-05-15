@@ -47,6 +47,8 @@ func main() {
 	fmt.Printf("ip: %d\n", chip.IP)
 	fmt.Printf("flags: %s", chip.GetFlags())
 	fmt.Println()
+
+	os.WriteFile("image.data", chip.Memory[:], 0644)
 }
 
 func Execute(chip *Chip, instruction Instruction) {

@@ -24,9 +24,18 @@ func ParseImmediate(input string) (int16, error) {
 
 func ParseLine(line string) Instruction {
 	parts := strings.Split(line, " ")
-	if len(parts) != 3 {
+	if len(parts) != 3 && len(parts) != 4 {
 		fmt.Printf("invalid instruction: %s\n", line)
 		os.Exit(1)
+	}
+
+	if len(parts) == 4 {
+		return Instruction{
+			Op:   parts[0],
+			Size: parts[1],
+			Dest: strings.TrimSuffix(parts[2], ","),
+			Src:  parts[3],
+		}
 	}
 
 	return Instruction{

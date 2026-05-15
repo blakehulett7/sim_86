@@ -23,6 +23,10 @@ func (c *Chip) TransformSourceInt(source *int16, instruction Instruction) {
 		c.SetFlags(uint16(result))
 		*source = result
 	case "cmp":
+		dest := c.GetValue(instruction.Dest)
+		result := int16(dest) - *source
+		c.SetFlags(uint16(result))
+		*source = int16(dest)
 	}
 }
 
@@ -40,7 +44,17 @@ func (c *Chip) TransformSourceRaw(source *[2]byte, instruction Instruction) {
 		c.SetFlags(result)
 		*source = WriteUint(result)
 	case "sub":
+		dest := c.GetValue(instruction.Dest)
+		src := castToU16(*source)
+		result := dest - src
+		c.SetFlags(result)
+		*source = WriteUint(result)
 	case "cmp":
+		dest := c.GetValue(instruction.Dest)
+		src := castToU16(*source)
+		result := dest - src
+		c.SetFlags(result)
+		*source = WriteUint(dest)
 	}
 }
 
