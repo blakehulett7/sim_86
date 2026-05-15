@@ -18,6 +18,13 @@ type Chip struct {
 	DS [2]byte
 	SS [2]byte
 	ES [2]byte
+
+	Flags Flags
+}
+
+type Flags struct {
+	Sign bool
+	Zero bool
 }
 
 func (c *Chip) GetRawValue(register string) [2]byte {
@@ -155,6 +162,38 @@ func (c *Chip) SetValue(register string, value [2]byte) {
 	case "dl":
 		c.DX[1] = value[1]
 	}
+}
+
+func (c *Chip) GetFlags() string {
+	var flags string
+
+	if c.Flags.Sign {
+		flags += "S"
+	}
+
+	if c.Flags.Zero {
+		flags += "Z"
+	}
+
+	return flags
+}
+
+func (c *Chip) SetFlags(result uint16) {
+	if result == 0 {
+		c.Flags.Sign = false
+		c.Flags.Zero = true
+		return
+	}
+
+	leading_bit := result >> 15
+	if leading_bit == 1 {
+		c.Flags.Sign = true
+		c.Flags.Zero = false
+		return
+	}
+
+	c.Flags.Sign = false
+	c.Flags.Zero = false
 }
 
 func (c *Chip) WriteSrcToDest(instruction Instruction, source_type SourceType) {

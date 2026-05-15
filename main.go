@@ -41,6 +41,7 @@ func main() {
 	fmt.Printf("es: %#x (%d)\n", chip.ES, chip.GetValue("es"))
 	fmt.Printf("ss: %#x (%d)\n", chip.SS, chip.GetValue("ss"))
 	fmt.Printf("ds: %#x (%d)\n", chip.DS, chip.GetValue("ds"))
+	fmt.Printf("flags: %s", chip.GetFlags())
 	fmt.Println()
 }
 
@@ -58,7 +59,7 @@ func Execute(chip *Chip, instruction Instruction) {
 	source_type := ParseSrcType(instruction.Src)
 	chip.WriteSrcToDest(instruction, source_type)
 
-	fmt.Printf("%#x\n", chip.GetValue(instruction.Dest))
+	fmt.Printf("%#x flags:%s\n", chip.GetValue(instruction.Dest), chip.GetFlags())
 }
 
 func WriteInt(value int16) [2]byte {
