@@ -9,6 +9,7 @@ type SourceType uint8
 
 const (
 	Int SourceType = iota
+	Memory
 	Raw
 	Register
 	SmallRegister

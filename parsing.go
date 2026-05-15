@@ -77,6 +77,11 @@ func ParseSrcType(input string) SourceType {
 		return Register
 	}
 
+	_, err = ParseMemoryAddress(input)
+	if err == nil {
+		return Memory
+	}
+
 	_, err = hex.DecodeString(input)
 	if err != nil {
 		return Raw
