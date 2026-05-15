@@ -6,4 +6,5 @@ const (
 	Int SourceType = iota
 	Raw
 	Register
+	SmallRegister
 )

@@ -57,10 +57,37 @@ func ParseSrcType(input string) SourceType {
 		return Int
 	}
 
+	if isRegister(input) {
+		return Register
+	}
+
 	_, err = hex.DecodeString(input)
 	if err != nil {
 		return Raw
 	}
 
 	return Register
+}
+
+func isRegister(input string) bool {
+	return input == "ax" ||
+		input == "bx" ||
+		input == "cx" ||
+		input == "dx" ||
+		input == "sp" ||
+		input == "bp" ||
+		input == "si" ||
+		input == "di" ||
+		input == "cs" ||
+		input == "ds" ||
+		input == "ss" ||
+		input == "es" ||
+		input == "ah" ||
+		input == "al" ||
+		input == "bh" ||
+		input == "bl" ||
+		input == "ch" ||
+		input == "cl" ||
+		input == "dh" ||
+		input == "dl"
 }

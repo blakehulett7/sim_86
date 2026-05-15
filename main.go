@@ -38,11 +38,22 @@ func main() {
 	fmt.Printf("bp: %#x (%d)\n", chip.BP, chip.GetValue("bp"))
 	fmt.Printf("si: %#x (%d)\n", chip.SI, chip.GetValue("si"))
 	fmt.Printf("di: %#x (%d)\n", chip.DI, chip.GetValue("di"))
+	fmt.Printf("es: %#x (%d)\n", chip.ES, chip.GetValue("es"))
+	fmt.Printf("ss: %#x (%d)\n", chip.SS, chip.GetValue("ss"))
+	fmt.Printf("ds: %#x (%d)\n", chip.DS, chip.GetValue("ds"))
 	fmt.Println()
 }
 
 func Execute(chip *Chip, instruction Instruction) {
-	fmt.Printf("%s:%#x->", instruction.Dest, chip.GetValue(instruction.Dest))
+	dest := instruction.Dest
+	if strings.Contains(instruction.Dest, "h") {
+		dest = strings.Replace(instruction.Dest, "h", "x", 1)
+	}
+	if strings.Contains(instruction.Dest, "l") {
+		dest = strings.Replace(instruction.Dest, "l", "x", 1)
+	}
+
+	fmt.Printf("%s:%#x->", dest, chip.GetValue(instruction.Dest))
 
 	if instruction.Op != "mov" {
 		fmt.Println("\nOp not supported, use mov")
