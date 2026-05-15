@@ -19,6 +19,8 @@ type Chip struct {
 	SS [2]byte
 	ES [2]byte
 
+	IP uint8
+
 	Flags Flags
 }
 

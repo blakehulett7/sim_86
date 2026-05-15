@@ -19,10 +19,12 @@ func main() {
 	}
 
 	var chip Chip
+	lines := strings.Split(string(file), "\n")
 
 	fmt.Printf("--- test\\%s execution ---\n", strings.TrimSuffix(path, ".asm"))
 
-	for line := range strings.SplitSeq(string(file), "\n") {
+	for chip.IP < uint8(len(lines)) {
+		line := lines[chip.IP]
 		fmt.Print(line + " ; ")
 		instruction := ParseLine(line)
 		Execute(&chip, instruction)
@@ -41,6 +43,7 @@ func main() {
 	fmt.Printf("es: %#x (%d)\n", chip.ES, chip.GetValue("es"))
 	fmt.Printf("ss: %#x (%d)\n", chip.SS, chip.GetValue("ss"))
 	fmt.Printf("ds: %#x (%d)\n", chip.DS, chip.GetValue("ds"))
+	fmt.Printf("ip: %d\n", chip.IP)
 	fmt.Printf("flags: %s", chip.GetFlags())
 	fmt.Println()
 }
@@ -69,6 +72,8 @@ func Execute(chip *Chip, instruction Instruction) {
 		fmt.Print(flag_string)
 	}
 	fmt.Println()
+
+	chip.IP++
 }
 
 func WriteInt(value int16) [2]byte {
