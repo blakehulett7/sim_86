@@ -34,6 +34,11 @@ func (c *Chip) TransformSourceRaw(source *[2]byte, instruction Instruction) {
 	case "mov":
 		return
 	case "add":
+		dest := c.GetValue(instruction.Dest)
+		src := castToU16(*source)
+		result := dest + src
+		c.SetFlags(result)
+		*source = WriteUint(result)
 	case "sub":
 	case "cmp":
 	}

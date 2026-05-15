@@ -224,6 +224,7 @@ func (c *Chip) WriteSrcToDest(instruction Instruction, source_type SourceType) {
 	case Memory:
 		address, _ := ParseMemoryAddress(instruction.Src)
 		value := c.GetFromMemory(address)
+		c.TransformSourceRaw(&value, instruction)
 		c.SetValue(instruction.Dest, value)
 	case Raw:
 		value := ParseRaw(instruction.Src)
@@ -244,8 +245,10 @@ func (c *Chip) WriteToMemory(memory_lookup string, value [2]byte) {
 	}
 
 	if memory_address.Register == "" {
+		fmt.Printf("[%d]:%b->", memory_address.Offset, c.GetFromMemory(memory_address))
 		c.Memory[memory_address.Offset+1] = value[0]
 		c.Memory[memory_address.Offset] = value[1]
+		fmt.Printf("%b ", c.GetFromMemory(memory_address))
 		return
 	}
 
@@ -254,8 +257,10 @@ func (c *Chip) WriteToMemory(memory_lookup string, value [2]byte) {
 		index += int(c.GetValue(memory_address.OffsetRegister))
 	}
 
+	fmt.Printf("[%d]:%x->", index, c.GetFromMemory(memory_address))
 	c.Memory[index+1] = value[0]
 	c.Memory[index+0] = value[1]
+	fmt.Printf("%x ", c.GetFromMemory(memory_address))
 }
 
 func (c *Chip) GetFromMemory(address MemoryAddress) [2]byte {

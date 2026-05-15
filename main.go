@@ -53,6 +53,7 @@ func Execute(chip *Chip, instruction Instruction) {
 	if instruction.Op == "jnz" {
 		if chip.Flags.Zero {
 			chip.IP++
+			fmt.Println()
 			return
 		}
 
