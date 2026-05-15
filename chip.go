@@ -245,6 +245,9 @@ func (c *Chip) WriteToMemory(memory_lookup string, value [2]byte) {
 		return
 	}
 
+	address := int(c.GetValue(memory_address.Register)) + memory_address.Offset
+	c.Memory[address+1] = value[0]
+	c.Memory[address+0] = value[1]
 }
 
 func NewChip() Chip {
