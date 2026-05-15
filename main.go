@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"strconv"
 	"strings"
 )
 
@@ -49,6 +50,22 @@ func main() {
 }
 
 func Execute(chip *Chip, instruction Instruction) {
+	if instruction.Op == "jnz" {
+		if chip.Flags.Zero {
+			chip.IP++
+			return
+		}
+
+		dest, err := strconv.ParseUint(instruction.Dest, 10, 8)
+		if err != nil {
+			fmt.Println("invalid jnz destination")
+			os.Exit(1)
+		}
+		fmt.Println()
+		chip.IP = uint8(dest)
+		return
+	}
+
 	dest := instruction.Dest
 	if strings.Contains(instruction.Dest, "h") {
 		dest = strings.Replace(instruction.Dest, "h", "x", 1)
@@ -71,6 +88,7 @@ func Execute(chip *Chip, instruction Instruction) {
 	if initial_flags != final_flags {
 		fmt.Print(flag_string)
 	}
+	fmt.Printf(" ip: %d", chip.IP)
 	fmt.Println()
 
 	chip.IP++

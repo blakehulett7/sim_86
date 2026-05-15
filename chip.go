@@ -25,8 +25,9 @@ type Chip struct {
 }
 
 type Flags struct {
-	Sign bool
-	Zero bool
+	Parity bool
+	Sign   bool
+	Zero   bool
 }
 
 func (c *Chip) GetRawValue(register string) [2]byte {
@@ -169,6 +170,10 @@ func (c *Chip) SetValue(register string, value [2]byte) {
 func (c *Chip) GetFlags() string {
 	var flags string
 
+	if c.Flags.Parity {
+		flags += "P"
+	}
+
 	if c.Flags.Sign {
 		flags += "S"
 	}
@@ -182,6 +187,7 @@ func (c *Chip) GetFlags() string {
 
 func (c *Chip) SetFlags(result uint16) {
 	if result == 0 {
+		c.Flags.Parity = true
 		c.Flags.Sign = false
 		c.Flags.Zero = true
 		return
@@ -189,11 +195,13 @@ func (c *Chip) SetFlags(result uint16) {
 
 	leading_bit := result >> 15
 	if leading_bit == 1 {
+		c.Flags.Parity = false
 		c.Flags.Sign = true
 		c.Flags.Zero = false
 		return
 	}
 
+	c.Flags.Parity = false
 	c.Flags.Sign = false
 	c.Flags.Zero = false
 }
