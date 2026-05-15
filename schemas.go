@@ -1,8 +1,9 @@
 package main
 
 type MemoryAddress struct {
-	Register string
-	Offset   int
+	Register       string
+	Offset         int
+	OffsetRegister string
 }
 
 type SourceType uint8

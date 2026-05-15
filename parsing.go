@@ -47,8 +47,12 @@ func ParseMemoryAddress(memory_lookup string) (MemoryAddress, error) {
 	if len(parts) != 2 {
 		return MemoryAddress{}, fmt.Errorf("invalid memory lookup: %s\n", memory_lookup)
 	}
-	offset, err := strconv.Atoi(parts[1])
 
+	if isRegister(parts[1]) {
+		return MemoryAddress{Register: parts[0], OffsetRegister: parts[1]}, nil
+	}
+
+	offset, err := strconv.Atoi(parts[1])
 	return MemoryAddress{Register: parts[0], Offset: offset}, err
 }
 

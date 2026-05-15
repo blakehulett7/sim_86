@@ -250,6 +250,10 @@ func (c *Chip) WriteToMemory(memory_lookup string, value [2]byte) {
 	}
 
 	index := int(c.GetValue(memory_address.Register)) + memory_address.Offset
+	if memory_address.OffsetRegister != "" {
+		index += int(c.GetValue(memory_address.OffsetRegister))
+	}
+
 	c.Memory[index+1] = value[0]
 	c.Memory[index+0] = value[1]
 }
@@ -258,7 +262,12 @@ func (c *Chip) GetFromMemory(address MemoryAddress) [2]byte {
 	if address.Register == "" {
 		return [2]byte{c.Memory[address.Offset+1], c.Memory[address.Offset]}
 	}
+
 	index := int(c.GetValue(address.Register)) + address.Offset
+	if address.OffsetRegister != "" {
+		index += int(c.GetValue(address.OffsetRegister))
+	}
+
 	return [2]byte{c.Memory[index+1], c.Memory[index]}
 }
 
